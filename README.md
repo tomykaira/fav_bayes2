@@ -25,7 +25,24 @@ jumandic や utf8 でない辞書をつかうと、形態素解析に失敗し�
 ### ubuntu
     apt-get install mecab mecab-ipadic-utf8 mecab-config
 
+### Mac OS X
+    homebrew install mecab mecab-ipadic
+
 (その他の OS でうごいた人は @tomy_kaira か Issue で報告してね)
+
+### Mecab Ruby Binding(必須)
+
+rubygems などにのっていないので、自分で入手する必要があります。
+
+[Rubyバインディングのソース](http://sourceforge.net/projects/mecab/files/mecab-ruby/0.98/)を入手してください。
+
+次の手順で mecab-ruby-0.98.tar.gz を展開し、 gem を作成し、イントールします。
+
+    tar zxvf mecab-ruby-0.98.tar.gz
+    cd mecab-ruby-0.98/
+    gem build mecab-ruby.gemspec
+    gem install mecab-ruby
+
 
 Settings
 --------
@@ -46,3 +63,7 @@ How To Use
 * TLをよくみます
 * ふぁぼります
 * そのうち自然に★がついてきます
+
+Thanks
+------
+* @katsyoshi さん : fav.rb の開発者で、fav_bayes 開発のお声をかけていただきました。
