@@ -134,17 +134,23 @@ Plugin.create(:fav_bayes2) do
 
   # callbacks
   onfavorite do |service, user, message|
+    next unless UserConfig[:fb2_learning]
+
     # 自分か?, 一回目か?(id_str based)
     message = get_original_message_from(message)
     register(message, true) if user.is_me?(service) && !@cache[:ids][:fav].include?(message[:id_str])
   end
 
   onunfavorite do |service, user, message|
+    next unless UserConfig[:fb2_learning]
+
     message = get_original_message_from(message)
     register(message, false) if user.is_me?(service) && !@cache[:ids][:unfav].include?(message[:id_str])
   end
 
   onupdate do |service, messages|
+    next unless UserConfig[:fb2_learning]
+
     messages.each do |m|
       m = get_original_message_from(m)
       next if @cache[:ids][:fav].include?(m[:id_str]) || @cache[:ids][:unfav].include?(m[:id_str])
@@ -156,7 +162,21 @@ Plugin.create(:fav_bayes2) do
       unfav_score = calc(words, :unfav)
 
       p fav_score, unfav_score, fav_score/unfav_score
-      m.favorite(true) if fav_score > unfav_score
+      m.favorite(true) if UserConfig[:fb2_fav] && fav_score > unfav_score
     end
   end
+
+  onboot do
+    Plugin.call(:setting_tab_regist, setting, "ふぁぼべいず2")
+  end
+
+  def setting
+    b = Gtk::VBox.new(false)
+    b_f = Mtk.group("べいずでふぁぼるよ",
+              Mtk.boolean(:fb2_learning, '学習する(使用時はチェック)'),
+              Mtk.boolean(:fb2_fav, 'ふぁぼる'),
+              Mtk.input(:fb2_accel, 'アクセラレータ(おおきくするとふぁぼりやすいよ)(0-)'))
+    b.closeup(b_f)
+  end
+
 end
