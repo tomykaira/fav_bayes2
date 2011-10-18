@@ -123,7 +123,6 @@ Plugin.create(:fav_bayes2) do
     p0 = Math.log(@cache[:count][type] / (@cache[:count][:unfav] + @cache[:count][:fav]).to_f)
     p1 = words.map{|w| Math.log(@cache[:words][type].has_key?(w) ? @cache[:words][type][w] + 1 : 1) }.inject(:+)
     p2 = words.size * Math.log(@cache[:wc][type] + @cache[:vocab])
-    p p0 + p1, p2
     return p0 + p1 - p2
   end
 
@@ -161,8 +160,8 @@ Plugin.create(:fav_bayes2) do
       fav_score = calc(words, :fav)
       unfav_score = calc(words, :unfav)
 
-      p fav_score, unfav_score, fav_score/unfav_score
-      m.favorite(true) if UserConfig[:fb2_fav] && fav_score > unfav_score
+      p fav_score - unfav_score + words.size*UserConfig[:fb2_accel].to_i*0.0001
+      m.favorite(true) if UserConfig[:fb2_fav] && fav_score > unfav_score - words.size*UserConfig[:fb2_accel].to_i*0.0001
     end
   end
 
