@@ -148,20 +148,25 @@ Plugin.create(:fav_bayes2) do
   end
 
   onupdate do |service, messages|
-    next unless UserConfig[:fb2_learning]
-
     messages.each do |m|
       m = get_original_message_from(m)
       next if @cache[:ids][:fav].include?(m[:id_str]) || @cache[:ids][:unfav].include?(m[:id_str])
 
-      words = register(m, m[:favorited])
+      if UserConfig[:fb2_learning]
+        words = register(m, m[:favorited])
+      else
+        words = @mecab.to_words(m[:message].dup)
+      end
 
       next if !words || words.empty?
-      fav_score = calc(words, :fav)
-      unfav_score = calc(words, :unfav)
 
-      p fav_score - unfav_score + words.size*UserConfig[:fb2_accel].to_i*0.0001
-      m.favorite(true) if UserConfig[:fb2_fav] && fav_score > unfav_score - words.size*UserConfig[:fb2_accel].to_i*0.0001
+      if UserConfig[:fb2_fav]
+        fav_score = calc(words, :fav)
+        unfav_score = calc(words, :unfav)
+
+        p fav_score - unfav_score + words.size*UserConfig[:fb2_accel].to_i*0.0001
+        m.favorite(true) if fav_score > unfav_score - words.size*UserConfig[:fb2_accel].to_i*0.0001
+      end
     end
   end
 
