@@ -21,7 +21,7 @@ class MeCab::Tagger
       return nil
     end
 
-    word = features[4] != '*' ? features[4] : node.surface.toutf8
+    word = features[6] != '*' ? features[6] : node.surface.toutf8
     case word
     when "れる", "する", "ある", "なる", "いい", "できる", "思う", "RT", "QT", "ー", "～", "w", "^！", "♪", "こと", "ない", "いう"
       return nil
@@ -44,7 +44,7 @@ class MeCab::Tagger
       return []
     end
 
-    node = parseToNode(text.toeuc)
+    node = parseToNode(text)
     while node
       words << node_filter(node)
       node = node.next
