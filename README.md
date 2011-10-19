@@ -26,7 +26,7 @@ jumandic や utf8 でない辞書をつかうと、形態素解析に失敗し�
     apt-get install mecab mecab-ipadic-utf8 mecab-config
 
 ### Mac OS X
-    homebrew install mecab mecab-ipadic
+    brew install mecab mecab-ipadic
 
 (その他の OS でうごいた人は @tomy_kaira か Issue で報告してね)
 
