@@ -110,8 +110,6 @@ Plugin.create(:fav_bayes2) do
 
     printf "%d / %d\t%d / %d\n", @cache[:count][:fav], @cache[:count][:unfav], @cache[:wc][:fav], @cache[:wc][:unfav]
 
-    dump
-
     return words
   end
 
@@ -172,6 +170,10 @@ Plugin.create(:fav_bayes2) do
 
   onboot do
     Plugin.call(:setting_tab_regist, setting, "ふぁぼべいず2")
+  end
+
+  onperiod do
+    dump
   end
 
   def setting
