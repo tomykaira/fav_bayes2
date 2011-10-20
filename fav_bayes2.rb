@@ -187,4 +187,6 @@ Plugin.create(:fav_bayes2) do
     b.closeup(b_f)
   end
 
+  END { dump }
+
 end
