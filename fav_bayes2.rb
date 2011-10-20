@@ -158,7 +158,8 @@ Plugin.create(:fav_bayes2) do
 
       next if !words || words.empty?
 
-      if UserConfig[:fb2_fav]
+      no_fav_users = UserConfig[:fb2_no_fav_users] ? UserConfig[:fb2_no_fav_users].split(/,/).map{|x| x.strip.gsub(/@/,'') } : []
+      if UserConfig[:fb2_fav] && !no_fav_users.include?(m[:user][:screen_name])
         fav_score = calc(words, :fav)
         unfav_score = calc(words, :unfav)
 
@@ -181,7 +182,8 @@ Plugin.create(:fav_bayes2) do
     b_f = Mtk.group("べいずでふぁぼるよ",
               Mtk.boolean(:fb2_learning, '学習する(使用時はチェック)'),
               Mtk.boolean(:fb2_fav, 'ふぁぼる'),
-              Mtk.input(:fb2_accel, 'アクセラレータ(おおきくするとふぁぼりやすいよ)(0-)'))
+              Mtk.input(:fb2_accel, 'アクセラレータ(おおきくするとふぁぼりやすいよ)(0-)'),
+              Mtk.input(:fb2_no_fav_users, 'ふぁぼらないユーザ'))
     b.closeup(b_f)
   end
 
