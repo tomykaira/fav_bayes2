@@ -124,6 +124,10 @@ Plugin.create(:fav_bayes2) do
     return p0 + p1 - p2
   end
 
+  def random_delay
+    (UserConfig[:fb2_delay].to_i * (900+rand(200))/1000.0).to_i
+  end
+
   # initialization
   @mecab = ::MeCab::Tagger.new
   CACHE_FILE = File.expand_path(Environment::CONFROOT + "fav_bayes2.dat")
@@ -164,7 +168,9 @@ Plugin.create(:fav_bayes2) do
         unfav_score = calc(words, :unfav)
 
         p fav_score - unfav_score + words.size*UserConfig[:fb2_accel].to_i*0.0001
-        m.favorite(true) if fav_score > unfav_score - words.size*UserConfig[:fb2_accel].to_i*0.0001
+        if fav_score > unfav_score - words.size*UserConfig[:fb2_accel].to_i*0.0001
+          Reserver.new(random_delay){ m.favorite(true) }
+        end
       end
     end
   end
@@ -183,7 +189,8 @@ Plugin.create(:fav_bayes2) do
               Mtk.boolean(:fb2_learning, '学習する(使用時はチェック)'),
               Mtk.boolean(:fb2_fav, 'ふぁぼる'),
               Mtk.input(:fb2_accel, 'アクセラレータ(おおきくするとふぁぼりやすいよ)(0-)'),
-              Mtk.input(:fb2_no_fav_users, 'ふぁぼらないユーザ'))
+              Mtk.input(:fb2_no_fav_users, 'ふぁぼらないユーザ'),
+              Mtk.input(:fb2_delay, '遅延時間(秒)'))
     b.closeup(b_f)
   end
 
